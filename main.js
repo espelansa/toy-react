@@ -1,16 +1,9 @@
-import { ToyReact } from './ToyReact';
+import { ToyReact, Component } from './ToyReact';
 
-class MyComponent {
-  mountTo(parent) {
-    let vdom = this.render();
-    vdom.mountTo(parent);
-  }
-  setAttribute(name, value) {
-    // react里所有的attribute就是property
-    this[name] = value;
-  }
+class MyComponent extends Component {
+  
   render() {
-    return <div>Cool</div>
+    return <div><span>Hello World!</span></div>
   }
 }
 

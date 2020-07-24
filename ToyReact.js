@@ -28,10 +28,11 @@ class TextWrapper {
 export const ToyReact = {
   createElement(type, attributes, ...children) {
     let element;
+    // typeof type === 'string' 说明是一个原生元素
     if (typeof type === 'string') {
       element = new ElementWrapper(type);
     } else {
-      // 为什么是new type
+      // 反之，则为自己设计的组件
       element = new type;
     }
     for (let name in attributes) {
@@ -50,6 +51,17 @@ export const ToyReact = {
   render(vdom, element) {
     // vdom => 实dom的过程
     vdom.mountTo(element);
-    // element.appendChild(vdom)
+  }
+}
+
+export class Component {
+  mountTo(parent) {
+    console.log(parent, 'parent')
+    let vdom = this.render();
+    vdom.mountTo(parent);
+  }
+  setAttribute(name, value) {
+    // react里所有的attribute就是property
+    this[name] = value;
   }
 }

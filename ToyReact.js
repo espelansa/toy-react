@@ -8,6 +8,7 @@ class ElementWrapper {
   }
   appendChild(vchild) {
     // 由虚向实
+    console.log('ElementWrapper | appendChild', vchild)
     vchild.mountTo(this.root);
   }
   mountTo(parent) {
@@ -39,29 +40,50 @@ export const ToyReact = {
       // attribute 和 property 在普通的dom元素上完全是两个概念
       element.setAttribute(name, attributes[name]);
     }
-    for (let child of children) {
-      if (typeof child === 'string') {
-        child = new TextWrapper(child);
+    let insertChildren = (children) => {
+      for (let child of children) {
+        if (typeof child === 'object' && child instanceof Array) {
+          // 递归
+          insertChildren(child);
+        } else {
+          if (!(child instanceof Component) && !(child instanceof ElementWrapper) && !(child instanceof TextWrapper)) {
+            child = String(child);
+          }
+          if (typeof child === 'string') {
+            child = new TextWrapper(child);
+          }
+          element.appendChild(child);
+        }
       }
-      element.appendChild(child);
     }
+
+    insertChildren(children);
+
     return element;
   },
 
   render(vdom, element) {
     // vdom => 实dom的过程
+    console.log(vdom, 'vdom')
     vdom.mountTo(element);
   }
 }
 
 export class Component {
+  constructor() {
+    this.children = [];
+  }
   mountTo(parent) {
-    console.log(parent, 'parent')
     let vdom = this.render();
     vdom.mountTo(parent);
   }
   setAttribute(name, value) {
     // react里所有的attribute就是property
     this[name] = value;
+  }
+  appendChild(vchild) {
+    this.children.push(vchild);
+    // 打印顺序：Inner里的p和a --> MyComponent里的text, div和Inner
+    // console.log('component | appendchild', this.children);
   }
 }

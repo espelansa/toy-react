@@ -8,7 +8,6 @@ class ElementWrapper {
   }
   appendChild(vchild) {
     // 由虚向实
-    console.log('ElementWrapper | appendChild', vchild)
     vchild.mountTo(this.root);
   }
   mountTo(parent) {
@@ -64,7 +63,6 @@ export const ToyReact = {
 
   render(vdom, element) {
     // vdom => 实dom的过程
-    console.log(vdom, 'vdom')
     vdom.mountTo(element);
   }
 }

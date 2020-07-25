@@ -4,12 +4,6 @@ class ElementWrapper {
     this.root = document.createElement(type);
   }
   setAttribute(name, value) {
-    if (name.match(/^on([\s\S]+)$/)) {
-      this.root.addEventListener(RegExp.$1.replace(/^[\s\S]/, s => s.toLowerCase()), value);
-    }
-    if (name === 'className') {
-      name = 'class';
-    }
     this.root.setAttribute(name, value);
   }
   appendChild(vchild) {
@@ -74,7 +68,6 @@ export const ToyReact = {
 export class Component {
   constructor() {
     this.children = [];
-    this.props = Object.create(null);
   }
   mountTo(parent) {
     let vdom = this.render();
@@ -83,7 +76,6 @@ export class Component {
   setAttribute(name, value) {
     // react里所有的attribute就是property
     this[name] = value;
-    this.props[name] = value;
   }
   appendChild(vchild) {
     this.children.push(vchild);

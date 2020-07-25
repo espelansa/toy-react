@@ -1,65 +1,62 @@
 import { ToyReact, Component } from './ToyReact';
 
-class MyComponent extends Component {
-  
+class Square extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      value: null
+    }
+  }
+
   render() {
-    return <div>
-              <span>Hello World!</span>
-              {this.children}
-            </div>
+    return (
+      <button className="square" onClick={() => this.setState({ value: 'X' })}>
+        {this.props.value}
+      </button>
+    )
   }
 }
 
-class Inner extends Component {
+class Board extends Component {
+  renderSquare(i) {
+    return <Square value={i} />
+  }
+
   render() {
-    return <section>
-            {this.children}
-           </section>
+    const status = 'Next player: X';
+
+    return (
+      <div>
+        <div className="status">{status}</div>
+        <div className="board-row">
+          {this.renderSquare(0)}
+          {this.renderSquare(1)}
+          {this.renderSquare(2)}
+        </div>
+        <div className="board-row">
+          {this.renderSquare(3)}
+          {this.renderSquare(4)}
+          {this.renderSquare(5)}
+        </div>
+        <div className="board-row">
+          {this.renderSquare(6)}
+          {this.renderSquare(7)}
+          {this.renderSquare(8)}
+        </div>
+      </div>
+    );
   }
 }
 
-let a = <MyComponent name="my-component" id="abc">
-          123
-          <Inner>
-            <a>Inside Inner Component</a>
-          </Inner>
-        </MyComponent>
-
-// document.body.appendChild(a);
+let a = <Board />
 
 ToyReact.render(
   a,
   document.body
-);
+)
 
 
 
-
-
-
-
-
-
-/*
-  let node = <div name="a" id="abc">
-    <span>Hello</span>
-    <span>World<a>abc</a></span>
-    <span>!</span>
-  </div>
-
-  =========================================
-
-  字符串不放在眼里，只有<>才能让它产生动力
-  var node = ToyReact.createElement("div", {
-    name: "a",
-    id: "abc"
-  }, 
-  ToyReact.createElement("span", null, "Hello"), 
-  ToyReact.createElement("span", null, "World", 
-  ToyReact.createElement("a", null, "abc")), 
-  ToyReact.createElement("span", null, "!"));
-  document.body.appendChild(node);
-*/
 
 
 

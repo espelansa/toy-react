@@ -20,9 +20,7 @@ class Inner extends Component {
 
 let a = <MyComponent name="my-component" id="abc">
           123
-          <div>abc</div>
           <Inner>
-            <p>inner</p>
             <a>Inside Inner Component</a>
           </Inner>
         </MyComponent>

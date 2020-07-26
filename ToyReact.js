@@ -16,8 +16,9 @@ class ElementWrapper {
     // 由虚向实
     vchild.mountTo(this.root);
   }
-  mountTo(parent) {
-    parent.appendChild(this.root);
+  mountTo(range) {
+    range.deleteContents();
+    range.insertChildren(this.root);
   }
 }
 
@@ -66,8 +67,14 @@ export const ToyReact = {
   },
 
   render(vdom, element) {
-    // vdom => 实dom的过程
-    vdom.mountTo(element);
+    let range = document.createRange();
+    if (element.children.length) {
+      range.setStartAfter(element.lastChild);
+      range.setEndAfter(element.lastChild);
+    } else {
+      range.setStart(element, 0);
+      
+    }
   }
 }
 
@@ -76,9 +83,10 @@ export class Component {
     this.children = [];
     this.props = Object.create(null);
   }
-  mountTo(parent) {
+  mountTo(range) {
+    range.deleteContents();
     let vdom = this.render();
-    vdom.mountTo(parent);
+    vdom.mountTo(range);
   }
   setAttribute(name, value) {
     // react里所有的attribute就是property
@@ -89,5 +97,24 @@ export class Component {
     this.children.push(vchild);
     // 打印顺序：Inner里的p和a --> MyComponent里的text, div和Inner
     // console.log('component | appendchild', this.children);
+  }
+  setState(state) {
+    let merge = (oldState, newState) => {
+      for (let p in newState) {
+        if (typeof newState[p] === 'object') {
+          if (typeof oldState[p] !== 'object') {
+            oldState[p] = {};
+          }
+          merge(oldState[p], newState[p]);
+        } else {
+          oldState[p] = newState[p];
+        }
+      }
+    }
+    if (!this.state && state) {
+      this.state = {}
+    }
+    merge(this.state, state);
+    console.log(this.state)
   }
 }

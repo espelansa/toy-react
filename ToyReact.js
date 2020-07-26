@@ -13,12 +13,19 @@ class ElementWrapper {
     this.root.setAttribute(name, value);
   }
   appendChild(vchild) {
-    // 由虚向实
-    vchild.mountTo(this.root);
+    let range = document.createRange();
+    if (this.root.children.length) {
+      range.setStartAfter(this.root.lastChild);
+      range.setEndAfter(this.root.lastChild);
+    } else {
+      range.setStart(this.root, 0);
+      range.setEnd(this.root, 0);
+    }
+    vchild.mountTo(range);
   }
   mountTo(range) {
     range.deleteContents();
-    range.insertChildren(this.root);
+    range.insertNode(this.root);
   }
 }
 
@@ -26,8 +33,9 @@ class TextWrapper {
   constructor(text) {
     this.root = document.createTextNode(text);
   }
-  mountTo(parent) {
-    parent.appendChild(this.root);
+  mountTo(range) {
+    range.deleteContents();
+    range.insertNode(this.root);
   }
 }
 
@@ -73,8 +81,9 @@ export const ToyReact = {
       range.setEndAfter(element.lastChild);
     } else {
       range.setStart(element, 0);
-      
+      range.setEnd(element, 0);
     }
+    vdom.mountTo(range);
   }
 }
 
@@ -84,9 +93,20 @@ export class Component {
     this.props = Object.create(null);
   }
   mountTo(range) {
-    range.deleteContents();
+    this.range = range;
+    this.update();
+  }
+  update() {
+    let placeholder = document.createComment('placeholder');
+    let range = document.createRange();
+    range.setStart(this.range.endContainer, this.range.endOffset);
+    range.setEnd(this.range.endContainer, this.range.endOffset);
+    range.insertNode(placeholder);
+
+    this.range.deleteContents();
     let vdom = this.render();
-    vdom.mountTo(range);
+    vdom.mountTo(this.range);
+
   }
   setAttribute(name, value) {
     // react里所有的attribute就是property
@@ -116,5 +136,6 @@ export class Component {
     }
     merge(this.state, state);
     console.log(this.state)
+    this.update();
   }
 }
